@@ -45,7 +45,7 @@ class MarkupParser: NSObject {
         //4
         let font = UIFont(name: fontName, size: UIScreen.main.bounds.size.height / 40) ?? defaultFont
         //5
-          let attrs = [NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: font] as [NSAttributedString.Key : Any]
+        let attrs = [NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: font] as [NSAttributedString.Key : Any]
         let text = NSMutableAttributedString(string: parts[0], attributes: attrs)
         attrString.append(text)
         // 1
@@ -120,25 +120,26 @@ class MarkupParser: NSObject {
             let width: CGFloat
           }
 
-          let extentBuffer = UnsafeMutablePointer<RunStruct>.allocate(capacity: 1)
-          extentBuffer.initialize(to: RunStruct(ascent: height, descent: 0, width: width))
-          //3
-          var callbacks = CTRunDelegateCallbacks(version: kCTRunDelegateVersion1, dealloc: { (pointer) in
-          }, getAscent: { (pointer) -> CGFloat in
-            let d = pointer.assumingMemoryBound(to: RunStruct.self)
-            return d.pointee.ascent
-          }, getDescent: { (pointer) -> CGFloat in
-            let d = pointer.assumingMemoryBound(to: RunStruct.self)
-            return d.pointee.descent
-          }, getWidth: { (pointer) -> CGFloat in
-            let d = pointer.assumingMemoryBound(to: RunStruct.self)
-            return d.pointee.width
-          })
-          //4
-          let delegate = CTRunDelegateCreate(&callbacks, extentBuffer)
-          //5
+            let extentBuffer = UnsafeMutablePointer<RunStruct>.allocate(capacity: 1)
+            extentBuffer.initialize(to: RunStruct(ascent: height, descent: 0, width: width))
+            //3
+            var callbacks = CTRunDelegateCallbacks(version: kCTRunDelegateVersion1,
+                                                   dealloc: { (pointer) in
+            }, getAscent: { (pointer) -> CGFloat in
+                let d = pointer.assumingMemoryBound(to: RunStruct.self)
+                return d.pointee.ascent
+            }, getDescent: { (pointer) -> CGFloat in
+                let d = pointer.assumingMemoryBound(to: RunStruct.self)
+                return d.pointee.descent
+            }, getWidth: { (pointer) -> CGFloat in
+                let d = pointer.assumingMemoryBound(to: RunStruct.self)
+                return d.pointee.width
+            })
+            //4
+            let delegate = CTRunDelegateCreate(&callbacks, extentBuffer)
+            //5
             let attrDictionaryDelegate = [(kCTRunDelegateAttributeName as NSAttributedString.Key): (delegate as Any)]
-          attrString.append(NSAttributedString(string: " ", attributes: attrDictionaryDelegate))
+            attrString.append(NSAttributedString(string: " ", attributes: attrDictionaryDelegate))
         }
       }
     } catch _ {
